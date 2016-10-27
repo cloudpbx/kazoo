@@ -39,7 +39,7 @@
 %% API
 
 %% @public
--spec maybe_update_number_services_view(ne_binary()) -> any().
+-spec maybe_update_number_services_view(ne_binary()) -> ok.
 maybe_update_number_services_view(?MATCH_ACCOUNT_ENCODED(_)=AccountDb) ->
     Classifiers = knm_converters:available_classifiers(), %%TODO: per-account classifiers.
     Pairs = [{Classification, kz_json:get_value([Classification, <<"regex">>], JObj)}
@@ -57,10 +57,10 @@ maybe_update_number_services_view(?MATCH_ACCOUNT_ENCODED(_)=AccountDb) ->
                                 ,View
                                 ),
     case kz_json:are_identical(View, NewView) of
-        true -> io:format("View is up to date.\n");
+        true -> ?LOG("View is up to date.", []);
         false ->
             true = kz_datamgr:db_view_update(AccountDb, [{ViewName, NewView}]),
-            io:format("View updated!\n")
+            ?LOG("View updated!", [])
     end.
 
 %% @public
@@ -109,6 +109,8 @@ fix_account_numbers(AccountDb = ?MATCH_ACCOUNT_ENCODED(A,B,Rest)) ->
                ok =:= ?LOG("########## will remove [~s] doc: ~s ##########", [AccountDb, DID])
            ],
     _ = kz_datamgr:del_docs(AccountDb, ToRm),
+    ?LOG("########## updating view [~s] ##########", [AccountDb]),
+    maybe_update_number_services_view(AccountDb),
     ?LOG("########## done fixing [~s] ##########", [AccountDb]);
 fix_account_numbers(Account = ?NE_BINARY) ->
     fix_account_numbers(kz_util:format_account_db(Account)).
