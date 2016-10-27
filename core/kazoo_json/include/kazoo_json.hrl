@@ -14,8 +14,7 @@
 -define(EMPTY_JSON_OBJECT, ?JSON_WRAPPER([])).
 
 -type json_value() :: 'null'
-                    | 'true'
-                    | 'false'
+                    | boolean()
                     | json_string()
                     | json_number()
                     | object()
