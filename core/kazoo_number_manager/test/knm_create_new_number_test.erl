@@ -96,6 +96,9 @@ create_existing_number_test_() ->
     ,{"Verify the local carrier module is being used"
      ,?_assertEqual(?CARRIER_LOCAL, knm_phone_number:module_name(PN))
      }
+    ,{"Verify local number is not billable"
+     ,?_assertEqual(false, knm_phone_number:is_billable(PN))
+     }
     ].
 
 create_existing_in_service_test_() ->
