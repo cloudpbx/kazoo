@@ -75,7 +75,7 @@
                           ,doc = kz_json:new() :: kz_json:object()
                           ,modified :: gregorian_seconds()
                           ,created :: gregorian_seconds()
-                          ,is_billable = undefined :: boolean()
+                          ,is_billable = undefined :: api_boolean()
                           }).
 -opaque knm_phone_number() :: #knm_phone_number{}.
 
