@@ -31,7 +31,13 @@
             orelse Prefix == <<"889">>
        ).
 
--define(DEFAULT_E911_FEATURE, ?DASH_KEY).
+-define(DEFAULT_ALLOWED_FEATURES, [?FEATURE_CNAM
+                                  ,?FEATURE_E911
+                                  ,<<"failover">>
+                                  ,<<"port">>
+                                  ,<<"prepend">>
+                                  ,?FEATURE_LOCAL
+                                  ]).
 
 
 -ifdef(TEST).

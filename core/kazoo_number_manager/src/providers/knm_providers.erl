@@ -14,27 +14,18 @@
 -export([delete/1]).
 -export([has_emergency_services/1]).
 -export([allowed_features/1
+        ,available_features/1
         ,service_name/2
         ]).
 
 -define(DEFAULT_CNAM_PROVIDER, <<"knm_cnam_notifier">>).
 -define(DEFAULT_E911_PROVIDER, <<"knm_dash_e911">>).
--define(DEFAULT_ALLOWED_FEATURES, [?FEATURE_CNAM
-                                  ,?FEATURE_E911
-                                  ,<<"failover">>
-                                  ,<<"port">>
-                                  ,<<"prepend">>
-                                  ]).
 
 -define(CNAM_PROVIDER(AccountId),
         kapps_account_config:get_from_reseller(AccountId, ?KNM_CONFIG_CAT, <<"cnam_provider">>, ?DEFAULT_CNAM_PROVIDER)).
 
 -define(E911_PROVIDER(AccountId),
         kapps_account_config:get_from_reseller(AccountId, ?KNM_CONFIG_CAT, <<"e911_provider">>, ?DEFAULT_E911_PROVIDER)).
-
--define(ALLOWED_FEATURES(AccountId),
-        lists:usort(
-          kapps_account_config:get_from_reseller(AccountId, ?KNM_CONFIG_CAT, <<"allowed_features">>, ?DEFAULT_ALLOWED_FEATURES))).
 
 %%--------------------------------------------------------------------
 %% @public
@@ -72,15 +63,28 @@ has_emergency_services(Number) ->
 %%--------------------------------------------------------------------
 %% @public
 %% @doc
-%% List features a number is allowedby its reseller to enable.
+%% List features a number is allowed by its reseller to enable.
 %% @end
 %%--------------------------------------------------------------------
 -spec allowed_features(knm_phone_number:knm_phone_number()) -> ne_binaries().
 allowed_features(PhoneNumber) ->
-    case knm_phone_number:assigned_to(PhoneNumber) of
-        'undefined' -> [];
-        AccountId -> ?ALLOWED_FEATURES(AccountId)
-    end.
+    available_features(knm_phone_number:assigned_to(PhoneNumber)).
+
+%%--------------------------------------------------------------------
+%% @public
+%% @doc
+%% List features an account is allowed by its reseller to enable on numbers.
+%% @end
+%%--------------------------------------------------------------------
+-spec available_features(api_ne_binary()) -> ne_binaries().
+available_features(undefined) -> [];
+available_features(?MATCH_ACCOUNT_RAW(AccountId)) ->
+    lists:usort(
+      kapps_account_config:get_from_reseller(AccountId
+                                            ,?KNM_CONFIG_CAT
+                                            ,<<"allowed_features">>
+                                            ,?DEFAULT_ALLOWED_FEATURES
+                                            )).
 
 %%--------------------------------------------------------------------
 %% @public
