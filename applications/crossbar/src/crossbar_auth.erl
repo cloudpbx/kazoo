@@ -62,6 +62,10 @@ create_auth_token(Context, AuthModule, JObj) ->
             cb_context:add_system_error('invalid_credentials', Context)
     end.
 
+-spec validate_auth_token(map() | ne_binary()) ->
+                                 {ok, kz_json:object()} | {error, any()}.
+-spec validate_auth_token(map() | ne_binary(), kz_proplist()) ->
+                                 {ok, kz_json:object()} | {error, any()}.
 validate_auth_token(Token) ->
     validate_auth_token(Token, []).
 
@@ -72,6 +76,7 @@ validate_auth_token(Token, Options) ->
     end.
 
 
+-spec authorize_auth_token(map() | ne_binary()) -> {'ok', kz_json:object()} | {'error', any()}.
 authorize_auth_token(Token) ->
     kz_auth:authorize_token(Token).
 

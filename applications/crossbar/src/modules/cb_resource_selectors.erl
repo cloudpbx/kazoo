@@ -52,19 +52,22 @@
 %%%===================================================================
 %%% API
 %%%===================================================================
-init() ->
-    [crossbar_bindings:bind(Binding, ?MODULE, F)
-     || {Binding, F} <- [{<<"*.allowed_methods.resource_selectors">>, 'allowed_methods'}
-                        ,{<<"*.resource_exists.resource_selectors">>, 'resource_exists'}
-                        ,{<<"*.content_types_accepted.resource_selectors">>, 'content_types_accepted'}
-                        ,{<<"*.validate.resource_selectors">>, 'validate'}
-                        ,{<<"*.execute.put.resource_selectors">>, 'put'}
-                        ,{<<"*.execute.post.resource_selectors">>, 'post'}
-                        ,{<<"*.execute.delete.resource_selectors">>, 'delete'}
 
-                        ,{<<"*.authorize">>, 'authorize'}
-                        ]
-    ].
+-spec init() -> ok.
+init() ->
+    _ = [crossbar_bindings:bind(Binding, ?MODULE, F)
+         || {Binding, F} <- [{<<"*.allowed_methods.resource_selectors">>, 'allowed_methods'}
+                            ,{<<"*.resource_exists.resource_selectors">>, 'resource_exists'}
+                            ,{<<"*.content_types_accepted.resource_selectors">>, 'content_types_accepted'}
+                            ,{<<"*.validate.resource_selectors">>, 'validate'}
+                            ,{<<"*.execute.put.resource_selectors">>, 'put'}
+                            ,{<<"*.execute.post.resource_selectors">>, 'post'}
+                            ,{<<"*.execute.delete.resource_selectors">>, 'delete'}
+
+                            ,{<<"*.authorize">>, 'authorize'}
+                            ]
+        ],
+    ok.
 
 -spec authorize(cb_context:context()) ->
                        boolean() | {'halt', cb_context:context()}.
